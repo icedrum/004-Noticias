@@ -15,6 +15,7 @@ export class Tab2Page implements  OnInit{
   noticias: Article[]=[];
   categorias=['business','entertainment','general','health','science','sports','technology'];
 
+  
   constructor(private noticiasservice: NoticiasService) {
 
   }
@@ -41,12 +42,35 @@ export class Tab2Page implements  OnInit{
   }
 
 
-  cargarNoticias(laCategoria: string){
+  cargarNoticias(laCategoria: string , evento? ){
     this.noticiasservice.getTopHeadlinesCategoria(laCategoria).subscribe(resp => {
-      console.log(resp);
+      //console.log(resp);
+      
+      if (resp.articles.length === 0 ){
+
+        if ( evento){
+          evento.target.complete();
+          evento.target.disable = true;
+        }
+        return;
+      }
+      
       this.noticias.push(...resp.articles);
+    
+      if ( evento){
+        evento.target.complete();
+        evento.target.disable = true;
+      }
     }) 
   
   }
+
+
+
+  loadData(event){
+    this.cargarNoticias(    this.segment.value, event );
+  }
+
+
 
 }

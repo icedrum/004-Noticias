@@ -6,7 +6,7 @@
   </ion-toolbar>
 
 
-  <ion-segment mode="md" scrollable color="primary"  (ionChange)="cambiarCategoria($event)"> 
+  <ion-segment mode="md" scrollable color="primary"   (ionChange)="cambiarCategoria($event)"> 
     <ion-segment-button mode="md"
      *ngFor="let categori of categorias"
       [value]="categori">
@@ -21,4 +21,14 @@
   
 <ion-content color="dark">
   <app-noticias [lasnoticias]="noticias"></app-noticias>
+
+  <ion-infinite-scroll threshold="25%" [disabled]="false" 
+      position="bottom" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" 
+            loadingText="Cargando mas datos...">
+      </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+
+
 </ion-content>

@@ -16,13 +16,42 @@ export class Tab1Page implements OnInit {
   }
 
   ngOnInit(){
-    this.noticiasService.getTopHeadlines().subscribe(
-      (resp) => { 
-        console.log('notcias',resp.articles);
-        this.lasnoticias.push(...resp.articles);
-      }
-    );
+    this.cargarNoticias() ;
   }
 
 
+  loadData(event){
+    console.log(event);
+    this.cargarNoticias(event);
+  }
+
+
+  cargarNoticias(elevento?){
+    
+    this.noticiasService.getTopHeadlines().subscribe(
+      (resp) => { 
+    
+        
+
+        if (resp.articles.length === 0){
+          
+          if (elevento){
+            elevento.target.disable=true;
+            elevento.target.complete();
+           
+            console.log('cero');
+            return;
+          }
+        }
+
+
+        this.lasnoticias.push(...resp.articles);
+
+        if (elevento){
+          elevento.target.complete();
+          console.log('comple');                                                                                                                                                                                                                               
+        }
+      }
+    );
+  }
 }

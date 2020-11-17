@@ -13,5 +13,11 @@
 
 <app-noticias [lasnoticias]="lasnoticias"></app-noticias>
 
+<ion-infinite-scroll color = "white" threshold="250px" 
+   position="bottom" (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll-content loadingSpinner="bubbles" 
+      loadingText="Cargando mas datos...">
+  </ion-infinite-scroll-content>
+</ion-infinite-scroll>
 
 </ion-content>

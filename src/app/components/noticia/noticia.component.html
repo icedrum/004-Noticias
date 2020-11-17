@@ -5,8 +5,9 @@
       <span class="noticia-soruce">{{unanoticia.source.name}}</span>
       
     </ion-card-subtitle>
-    <ion-card-title> </ion-card-title>
-    <ion-img *ngIf="unanoticia.urlToImage" 
+    <ion-card-title (click)="abrirNoticia()"> </ion-card-title>
+    <ion-img *ngIf="unanoticia.urlToImage"
+      (click)="abrirNoticia()" 
       [src]="unanoticia.urlToImage"></ion-img>
   </ion-card-header>
 
