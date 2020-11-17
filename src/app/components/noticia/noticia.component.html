@@ -1,0 +1,16 @@
+<ion-card color="dark">
+  <ion-card-header>
+    <ion-card-subtitle>
+      <span class="text-primary">{{elindice}}.  </span>
+      <span class="noticia-soruce">{{unanoticia.source.name}}</span>
+      
+    </ion-card-subtitle>
+    <ion-card-title> </ion-card-title>
+    <ion-img *ngIf="unanoticia.urlToImage" 
+      [src]="unanoticia.urlToImage"></ion-img>
+  </ion-card-header>
+
+  <p>
+    {{unanoticia.description}}
+  </p>
+</ion-card>
