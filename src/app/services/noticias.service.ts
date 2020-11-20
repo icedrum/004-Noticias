@@ -1,16 +1,15 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { RespuestaTopHeadLines } from '../pages/interfaces/interfaces';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { RespuestaTopHeadlines } from '../interfaces/interfaces';
+import { environment } from '../../environments/environment';
 
 
-const apikey = environment.apiKey;
-const apiUrl = environment.apiUrl;
+const apiKey = environment.apiKey;
+const apiUlr = environment.apiUlr;
 
-const headers =  new HttpHeaders({
-  'X-Api-Key': apikey
+const headers = new HttpHeaders({
+  'X-Api-key': apiKey
 });
-
 
 
 @Injectable({
@@ -18,49 +17,48 @@ const headers =  new HttpHeaders({
 })
 export class NoticiasService {
 
-
   headlinesPage = 0;
-  categoriaActual='';
-  cartegoriaPage=0;
 
-  constructor(private http: HttpClient) { }
+  categoriaActual = '';
+  categoriaPage = 0;
 
-
-  private ejecutarQuery<T>( querystring : string) {
-    querystring=apiUrl + querystring;
-    
-      return this.http.get<T>(querystring,  {headers});
-  }; 
+  constructor( private http: HttpClient ) { }
 
 
-  getTopHeadlines(){
-    var encabe: string = "";
-    
+  private ejecutarQuery<T>( query: string ) {
+
+    query = apiUlr + query;
+
+    return this.http.get<T>( query, { headers } );
+
+  }
+
+
+  getTopHeadlines() {
+
     this.headlinesPage++;
-    encabe='/top-headlines?country=us&page=' + this.headlinesPage.toString();
-   
-    return this.ejecutarQuery<RespuestaTopHeadLines>(encabe);
-   // return this.http.get<T>('https://newsapi.org/v2/top-headlines?country=us&apiKey=b281a20a35204f42a2c6e69d63c4117c');
-    
+
+    // tslint:disable-next-line:max-line-length
+    // return this.http.get<RespuestaTopHeadlines>(`https://newsapi.org/v2/top-headlines?country=us&apiKey=dc62b49904694e81adf392d7e45a2365`);
+
+    return this.ejecutarQuery<RespuestaTopHeadlines>(`/top-headlines?country=us&page=${ this.headlinesPage }`);
   }
 
+  getTopHeadlinesCategoria( categoria: string ) {
 
-  getTopHeadlinesCategoria(categoria: string){
-    
-    if (this.categoriaActual === categoria){
-      this.cartegoriaPage++ 
+    if ( this.categoriaActual === categoria ) {
+      this.categoriaPage++;
     } else {
-      this.categoriaActual=categoria;
-      this.cartegoriaPage=1;
+      this.categoriaPage = 1;
+      this.categoriaActual = categoria;
     }
-    
-    //('https://newsapi.org/v2/top-headlines?country=us&apiKey=b281a20a35204f42a2c6e9d63c4117c');
-    categoria='/top-headlines?country=us&category='+categoria;
-    categoria=categoria + "&page=" + this.cartegoriaPage.toString();
-    console.log( categoria );
-    return this.ejecutarQuery<RespuestaTopHeadLines>(categoria);
-    
-  }
 
+
+    // return this.http.get(`https://newsapi.org/v2/top-headlines?country=de&category=business&apiKey=dc62b49904694e81adf392d7e45a2365`);
+
+    return this.ejecutarQuery<RespuestaTopHeadlines>(`/top-headlines?country=us&category=${ categoria }&page=${ this.categoriaPage }`);
+
+
+  }
 
 }

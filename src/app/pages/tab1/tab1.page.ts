@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NoticiasService } from 'src/app/services/noticias.service';
-import { Article, RespuestaTopHeadLines } from '../interfaces/interfaces';
+import { NoticiasService } from '../../services/noticias.service';
+import { Article } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-tab1',
@@ -9,49 +9,43 @@ import { Article, RespuestaTopHeadLines } from '../interfaces/interfaces';
 })
 export class Tab1Page implements OnInit {
 
-  lasnoticias: Article[]=[];
+  noticias: Article[] = [];
 
-  constructor(private noticiasService: NoticiasService) {
+  constructor( private noticiasService: NoticiasService) {
 
   }
 
-  ngOnInit(){
-    this.cargarNoticias() ;
+  ngOnInit() {
+    this.cargarNoticias();
   }
 
+  loadData( event ) {
 
-  loadData(event){
     console.log(event);
-    this.cargarNoticias(event);
+
+    this.cargarNoticias( event );
+  }
+
+  cargarNoticias( event? ) {
+    this.noticiasService.getTopHeadlines()
+      .subscribe( resp => {
+        // console.log('noticias', resp );
+
+        if ( resp.articles.length === 0 ) {
+          event.target.disabled = true;
+          event.target.complete();
+          return;
+        }
+
+        // this.noticias = resp.articles;
+        this.noticias.push( ...resp.articles );
+
+        if ( event ) {
+          event.target.complete();
+        }
+
+      });
   }
 
 
-  cargarNoticias(elevento?){
-    
-    this.noticiasService.getTopHeadlines().subscribe(
-      (resp) => { 
-    
-        
-
-        if (resp.articles.length === 0){
-          
-          if (elevento){
-            elevento.target.disable=true;
-            elevento.target.complete();
-           
-            console.log('cero');
-            return;
-          }
-        }
-
-
-        this.lasnoticias.push(...resp.articles);
-
-        if (elevento){
-          elevento.target.complete();
-          console.log('comple');                                                                                                                                                                                                                               
-        }
-      }
-    );
-  }
 }

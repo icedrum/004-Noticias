@@ -1,80 +1,101 @@
-import { Component,Input, OnInit } from '@angular/core';
-import { Article } from 'src/app/pages/interfaces/interfaces';
+import { Component, OnInit, Input } from '@angular/core';
+import { Article } from '../../interfaces/interfaces';
 
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { ActivatedRoute } from '@angular/router';
 import { ActionSheetController } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { DatalocalService } from 'src/app/services/datalocal.service';
+import { DataLocalService } from '../../services/data-local.service';
 
 @Component({
   selector: 'app-noticia',
   templateUrl: './noticia.component.html',
-  styleUrls: ['./noticia.component.scss'],
+  styleUrls: ['./noticia.component.scss']
 })
 export class NoticiaComponent implements OnInit {
 
-  @Input() unanoticia:  Article;
-  @Input()  elindice: number;
+  @Input() noticia: Article;
+  @Input() indice: number;
+  @Input() enFavoritos;
 
+  constructor( private iab: InAppBrowser,
+               private actionSheetCtrl: ActionSheetController,
+               private socialSharing: SocialSharing,
+               private datalocalService: DataLocalService ) { }
 
-  constructor(private iab: InAppBrowser,
-              private actionsheetctr : ActionSheetController,
-              private socialSharing: SocialSharing,
-              private datalocal: DatalocalService 
-              ) { }
- 
-  ngOnInit() {}
+  ngOnInit() {
 
-
-  abrirNoticia(){
-
-    console.log(this.unanoticia.url);
- 
-    const browser = this.iab.create(this.unanoticia.url,'_system');
-
-    // browser.close();
+    console.log('Favoritos', this.enFavoritos );
+  
   }
 
+  abrirNoticia() {
+    // console.log('Noticia', );
+    const browser = this.iab.create(this.noticia.url, '_system');
 
-  async lanzarMenu(){
+  }
 
+  async lanzarMenu() {
 
-    const actionSheet = await this.actionsheetctr.create({
-      
-      //cssClass: 'my-custom-class',
-      buttons: [ 
-      {
-        text: 'Compartir',
-        icon: 'share',
-        cssClass: 'actdark',
+    let guardarBorrarBtn;
+
+    if ( this.enFavoritos ) {
+
+      guardarBorrarBtn = {
+        text: 'Borrar Favorito',
+        icon: 'trash',
+        cssClass: 'action-dark',
         handler: () => {
-          console.log('Share  clicked');
-          this.socialSharing.share(this.unanoticia.title,this.unanoticia.source.name,
-            '',this.unanoticia.url);
+          console.log('Borrar de favorito');
+          this.datalocalService.borrarNoticia( this.noticia );
         }
-      }, {
+      };
+
+    } else {
+
+      guardarBorrarBtn = {
         text: 'Favorito',
         icon: 'star',
-        cssClass: 'actdark',
+        cssClass: 'action-dark',
         handler: () => {
-          console.log('Fav');
-          this.datalocal.guardarEnFavoritos(this.unanoticia);
+          console.log('Favorito');
+          this.datalocalService.guardarNoticia( this.noticia );
         }
-      },{
+      };
+
+    }
+
+
+
+    const actionSheet = await this.actionSheetCtrl.create({
+      buttons: [
+        {
+          text: 'Compartir',
+          icon: 'share',
+          cssClass: 'action-dark',
+          handler: () => {
+            console.log('Share clicked');
+            this.socialSharing.share(
+              this.noticia.title,
+              this.noticia.source.name,
+              '',
+              this.noticia.url
+            );
+        }
+      },
+      guardarBorrarBtn,
+      {
         text: 'Cancelar',
         icon: 'close',
-        cssClass: 'actdark',
         role: 'cancel',
+        cssClass: 'action-dark',
         handler: () => {
           console.log('Cancel clicked');
         }
       }]
     });
+
     await actionSheet.present();
 
-
   }
-
 
 }
